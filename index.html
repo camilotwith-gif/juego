@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏃 Runner - Escape del Acosador</title>
+    <style>
+        /* COLORES ANTERIORES (ORIGINALES) - Para revertir si es necesario:
+           - Cyan Principal: #00ffff
+           - Green Secundario: #00ff88
+           - Pink/Magenta: #ff0066
+           - Background: #1a1a2e
+           - Border: #00ffff
+        */
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: #1a1a2e url('images/Captura%20de%20pantalla%202026-04-10%20090608.png') no-repeat;
+            background-size: cover;
+            background-position: center top;
+            background-attachment: fixed;
+            overflow: hidden;
+            border: 2px solid #00ffff;
+        }
+        
+        #gameContainer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 26, 46, 0.4);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 5;
+            background-color: transparent;
+        }
+        
+        .menu-screen, .game-over-screen, .win-screen {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .hidden { display: none !important; }
+        
+        h1 {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #00ffff;
+            text-shadow: 0 0 20px #00ffff;
+            letter-spacing: 3px;
+        }
+        
+        .subtitle {
+            font-size: 24px;
+            margin-bottom: 40px;
+            color: #ff0066;
+            text-shadow: 0 0 10px #ff0066;
+        }
+        
+        .instructions {
+            background: rgba(0,255,255,0.1);
+            border: 2px solid #00ffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            max-width: 600px;
+            font-size: 18px;
+            line-height: 1.8;
+            color: #ccc;
+        }
+        
+        button {
+            padding: 15px 50px;
+            font-size: 20px;
+            background: linear-gradient(135deg, #00ffff, #00ff88);
+            color: #000;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+        }
+        
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(0,255,255,0.8);
+        }
+        
+        .hud {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 100;
+            font-size: 18px;
+            font-weight: bold;
+            color: #00ffff;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 10px #00ffff;
+        }
+        
+        .hud-left {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .hud-right {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .hud-item {
+            background: rgba(0,255,255,0.1);
+            border: 2px solid #00ffff;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+        
+        .threat-indicator {
+            background: rgba(255,0,100,0.1);
+            border: 2px solid #ff0066;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: #ff0066;
+            text-shadow: 0 0 10px #ff0066;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .question-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.95);
+            border: 3px solid #00ffff;
+            padding: 40px;
+            border-radius: 20px;
+            z-index: 1000;
+            text-align: center;
+            max-width: 700px;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .question-title {
+            font-size: 32px;
+            color: #00ffff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ffff;
+        }
+        
+        .question-text {
+            font-size: 20px;
+            color: #ccc;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .answer-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .answer-btn {
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            line-height: 1.4;
+            background: rgba(0,0,0,0.5);
+            font-weight: bold;
+        }
+        
+        .answer-correct {
+            border-color: #0099ff;
+            color: #0099ff;
+        }
+        
+        .answer-incorrect {
+            border-color: #0099ff;
+            color: #0099ff;
+        }
+        
+        .answer-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px currentColor;
+        }
+        
+        .stats {
+            font-size: 24px;
+            color: #00ffff;
+            margin: 20px 0;
+            line-height: 2;
+        }
+        
+        .message {
+            font-size: 18px;
+            color: #aaa;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div class="hud hidden" id="hud">
+            <div class="hud-left">
+                <!-- <div class="hud-item">❤️ <span id="healthDisplay">3</span>/3</div> -->
+                <div class="hud-item">📍 <span id="distanceDisplay">0</span>m</div>
+                <div class="hud-item">⏱️ <span id="timeDisplay">0</span>s</div>
+            </div>
+            <div class="hud-right">
+                <div class="threat-indicator">👿 <span id="threatDisplay">0%</span></div>
+            </div>
+        </div>
+        
+        <div class="question-box hidden" id="questionBox">
+            <div class="question-title" id="questionTitle">Pregunta de Seguridad</div>
+            <div class="question-text" id="questionText">¿Cuál es la respuesta correcta?</div>
+            <div class="answer-buttons">
+                <button class="answer-btn answer-correct" onclick="answerQuestion(true)">
+                    <span id="correctAnswer">Opción A</span>
+                </button>
+                <button class="answer-btn answer-incorrect" onclick="answerQuestion(false)">
+                    <span id="incorrectAnswer">Opción B</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="menu-screen" id="menuScreen">
+            <h1>🏃 RUNNER</h1>
+            <div class="subtitle">ESCAPE DEL ACOSADOR</div>
+            <div class="instructions">
+                <strong>Ayuda al jugador a escapar del depredador digital</strong><br><br>
+                🕹️ Controles: ESPACIO o FLECHA ARRIBA para saltar<br>
+                🚧 Esquiva púas 🔺 y bombas 💣<br>
+                ❓ Responde preguntas de ciberseguridad en los checkpoints<br>
+                👿 El acosador acelera conforme avanzas<br>
+                📍 Recorre 9916 metros y 6 checkpoints para ganar
+            </div>
+            <button onclick="startGame()">INICIAR JUEGO</button>
+        </div>
+        
+        <div class="game-over-screen hidden" id="gameOverScreen">
+            <h1>⚠️ INTERCEPTADO</h1>
+            <div class="subtitle">El acosador te atrapó</div>
+            <div class="stats" id="gameOverStats">
+                📍 Distancia: 0m<br>
+                ⏱️ Tiempo: 0s<br>
+                ✅ Checkpoints completados: 0/6
+            </div>
+            <div class="message">
+                Recuerda: Mantén distancia con amenazas, no compartas datos,<br>
+                configura privacidad y reporta acoso inmediatamente.
+            </div>
+            <button onclick="resetGame()">REINTENTAR</button>
+        </div>
+        
+        <div class="win-screen hidden" id="winScreen">
+            <h1>🏆 ¡ESCAPASTE!</h1>
+            <div class="subtitle">Entrenamiento Completado</div>
+            <div class="stats" id="winStats">
+                📍 Distancia: 0m<br>
+                ⏱️ Tiempo: 0s<br>
+                ✅ Checkpoints completados: 3/3
+            </div>
+            <div class="message">
+                He demostrado ser un experto en ciberseguridad.<br>
+                ¡Felicidades, CyberGuard!
+            </div>
+            <button onclick="resetGame()">NUEVO JUEGO</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Elementos UI
+        const hud = document.getElementById('hud');
+        const menuScreen = document.getElementById('menuScreen');
+        const questionBox = document.getElementById('questionBox');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const winScreen = document.getElementById('winScreen');
+        
+        // Variables de juego
+        let gameState = 'menu'; // menu, playing, question, gameOver, won
+        let frameCount = 0;
+        let gameTime = 0;
+        
+        // Jugador
+        let player = {
+            x: 100,
+            y: 0,
+            width: 30,
+            height: 40,
+            velocityY: 0,
+            jumping: false,
+            speed: 6,
+            health: 1,
+            maxHealth: 1
+        };
+        
+        // Acosador
+        let threat = {
+            x: -50,
+            y: 0,
+            width: 35,
+            height: 40,
+            speed: 2,
+            baseSpeed: 2,
+            distanceTraveled: 0
+        };
+        
+        // Terreno
+        let groundY = 0;
+        let cameraX = 0;
+        let distanceTraveled = 0;
+        
+        // Obstáculos
+        let obstacles = [];
+        let checkpoints = [];
+        
+        // Preguntas
+        const questions = [
+            {
+                text: '¿Qué es el phishing?',
+                correct: 'Es un ataque en el que los ciberdelincuentes se hacen pasar por una entidad de confianza para robar información confidencial, como contraseñas o datos personales.',
+                incorrect: 'Es una técnica de protección para prevenir el acceso no autorizado a un sistema.'
+            },
+            {
+                text: '¿Cuál de los siguientes es el propósito de un firewall?',
+                correct: 'Proteger una red contra accesos no autorizados o maliciosos controlando el tráfico entrante y saliente.',
+                incorrect: 'Realizar copias de seguridad automáticas de todos los archivos en un servidor remoto.'
+            },
+            {
+                text: '¿Para qué sirve habilitar el cifrado en una red WiFi?',
+                correct: 'Para proteger los datos transmitidos a través de la red, haciéndolos ilegibles para personas no autorizadas.',
+                incorrect: 'Para aumentar la velocidad de conexión de Internet.'
+            },
+            {
+                text: '¿Qué significan las siglas "MFA" (Autenticación Multi-Factor)?',
+                correct: 'Es un enfoque de seguridad que requiere múltiples tipos de verificación, como contraseñas y un código enviado al teléfono.',
+                incorrect: 'Es una técnica de pirateo que utiliza varios métodos para acceder a cuentas protegidas.'
+            },
+            {
+                text: '¿Es seguro utilizar la misma contraseña para todas tus cuentas en línea?',
+                correct: 'No, utilizar la misma contraseña en todas las cuentas aumenta el riesgo de exposición en caso de que una cuenta sea comprometida.',
+                incorrect: 'Sí, es más conveniente y no existe riesgo si la contraseña es fuerte.'
+            },
+            {
+                text: '¿Qué es el ransomware?',
+                correct: 'Es un tipo de malware que cifra los archivos de la víctima y exige un rescate para restaurar el acceso.',
+                incorrect: 'Es un software de seguridad que protege contra ataques de malware.'
+            },
+            {
+                text: '¿Qué es el ciberacoso?',
+                correct: 'Es el uso de medios digitales para acosar, intimidar o amenazar a otra persona de manera repetitiva.',
+                incorrect: 'Es una táctica legal utilizada para investigar delitos en Internet.'
+            },
+            {
+                text: '¿Qué debe hacer una víctima de ciberacoso?',
+                correct: 'Guardar pruebas, bloquear al acosador y denunciar a las autoridades o plataformas relevantes.',
+                incorrect: 'Ignorar el problema con la esperanza de que se resuelva solo.'
+            },
+            {
+                text: '¿En qué plataformas puede ocurrir el ciberacoso?',
+                correct: 'En redes sociales, aplicaciones de mensajería, foros en línea, juegos y correos electrónicos.',
+                incorrect: 'El ciberacoso solo puede ocurrir en redes sociales populares.'
+            },
+            {
+                text: '¿Cuál es una señal de que alguien podría ser víctima de ciberacoso?',
+                correct: 'Cambios repentinos en el comportamiento, como aislamiento o miedo de usar dispositivos electrónicos.',
+                incorrect: 'Alegría constante al usar dispositivos electrónicos.'
+            },
+            {
+                text: '¿Cómo podemos prevenir el ciberacoso?',
+                correct: 'Promoviendo la empatía, estableciendo reglas claras en línea y enseñando sobre el uso responsable de la tecnología.',
+                incorrect: 'Fomentando discusiones agresivas en línea para expresar opiniones.'
+            }
+        ];
+        
+        let currentQuestionIndex = 0;
+        let checkpointsCompleted = 0;
+        
+        // Controles
+        let keys = {};
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            groundY = canvas.height * 0.7;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        
+        function startGame() {
+            gameState = 'playing';
+            menuScreen.classList.add('hidden');
+            hud.classList.remove('hidden');
+            
+            player.x = 100;
+            player.y = groundY - player.height;
+            player.velocityY = 0;
+            player.jumping = false;
+            player.health = player.maxHealth;
+            
+            threat.x = -50;
+            threat.y = groundY - threat.height;
+            threat.speed = threat.baseSpeed;
+            threat.distanceTraveled = 0;
+            
+            distanceTraveled = 0;
+            cameraX = 0;
+            frameCount = 0;
+            gameTime = 0;
+            obstacles = [];
+            checkpoints = [];
+            checkpointsCompleted = 0;
+            currentQuestionIndex = 0;
+            
+            generateLevel();
+        }
+        
+        function generateLevel() {
+            obstacles = [];
+            checkpoints = [];
+            
+            // ZONA DE INTRODUCCIÓN: primeros 600 píxeles sin obstáculos
+            const introDistance = 600;
+            
+            // Primero: Generar checkpoints (6 checkpoints en lugar de 3)
+            // Distancia variable entre obstáculos para evitar repetitividad
+            const checkpointPositions = [];
+            const distancias = [160, 200, 180, 220, 170, 190]; // Distancias alternadas para más variedad
+            
+            let currentX = introDistance + 150;
+            let distanceIndex = 0;
+            
+            // Generar ~50 obstáculos con distancias variadas
+            for (let i = 0; i < 50; i++) {
+                const distance = distancias[distanceIndex % distancias.length];
+                currentX += distance;
+                distanceIndex++;
+                
+                // Checkpoint cada ~8 obstáculos = 6 checkpoints totales en el recorrido
+                if (i % 8 === 0 && checkpointsCompleted < 6 && i > 0) {
+                    checkpointPositions.push(currentX + 70);
+                    checkpoints.push({ 
+                        x: currentX + 70, 
+                        y: groundY - 50,
+                        width: 50,
+                        height: 50,
+                        collected: false, 
+                        index: Math.floor(i / 8) - 1
+                    });
+                }
+            }
+            
+            // Segundo: Generar obstáculos evitando zonas de checkpoints (±200px) con distancias variadas
+            let obsX = introDistance + 150;
+            distanceIndex = 0;
+            
+            for (let i = 0; i < 50; i++) {
+                const distance = distancias[distanceIndex % distancias.length];
+                obsX += distance;
+                distanceIndex++;
+                
+                // Verificar si este obstáculo está muy cerca de un checkpoint
+                let isTooCloseToCheckpoint = false;
+                for (let cpX of checkpointPositions) {
+                    if (Math.abs(obsX - cpX) < 200) { // 200px de seguridad alrededor del checkpoint
+                        isTooCloseToCheckpoint = true;
+                        break;
+                    }
+                }
+                
+                // Solo generar obstáculo si está lo suficientemente lejos de checkpoints
+                if (!isTooCloseToCheckpoint) {
+                    const type = Math.random() > 0.5 ? 'bomb' : 'spike';
+                    obstacles.push({
+                        x: obsX,
+                        y: groundY - 25,
+                        width: 28,
+                        height: 28,
+                        type
+                    });
+                }
+            }
+        }
+        
+        function updateGame() {
+            // Movimiento del jugador
+            const gravity = 0.6;
+            player.velocityY += gravity;
+            player.y += player.velocityY;
+            
+            // Colisión con el suelo
+            if (player.y >= groundY - player.height) {
+                player.y = groundY - player.height;
+                player.velocityY = 0;
+                player.jumping = false;
+            }
+            
+            // Movimiento horizontal automático - Solo cuando está jugando
+            if (gameState === 'playing') {
+                player.x += player.speed;
+            }
+            distanceTraveled = player.x;
+            cameraX = player.x - 150;
+            
+            // Actualizar amenaza
+            threat.speed = threat.baseSpeed + (distanceTraveled / 3000);
+            threat.x += threat.speed;
+            threat.y = groundY - threat.height;
+            threat.distanceTraveled = threat.x;
+            
+            // Verificar colisión con amenaza
+            if (checkCollision(player, threat)) {
+                endGame(false);
+                return;
+            }
+            
+            // Verificar colisión con obstáculos - Una colisión = GAME OVER
+            // EXCEPTO cuando estamos respondiendo una pregunta
+            if (gameState === 'playing') {
+                for (let obs of obstacles) {
+                    if (checkCollision(player, obs)) {
+                        endGame(false);
+                        return;
+                    }
+                }
+            }
+            
+            // Verificar checkpoints - Usando colisión precisa
+            for (let cp of checkpoints) {
+                if (!cp.collected && checkCollision(player, cp)) {
+                    cp.collected = true;
+                    gameState = 'question';
+                    showQuestion(currentQuestionIndex);
+                }
+            }
+            
+            // Verificar victoria - 6 checkpoints en lugar de 3
+            if (distanceTraveled >= 5500 && checkpointsCompleted >= 6) {
+                endGame(true);
+            }
+            
+            // Actualizar tiempo
+            if (gameState === 'playing') {
+                gameTime += 1/60;
+            }
+        }
+        
+        function checkCollision(obj1, obj2) {
+            return obj1.x < obj2.x + obj2.width &&
+                   obj1.x + obj1.width > obj2.x &&
+                   obj1.y < obj2.y + obj2.height &&
+                   obj1.y + obj1.height > obj2.y;
+        }
+        
+        function showQuestion(index) {
+            const q = questions[index % questions.length];
+            document.getElementById('questionTitle').textContent = `Checkpoint ${checkpointsCompleted + 1}/6`;
+            document.getElementById('questionText').textContent = q.text;
+            document.getElementById('correctAnswer').textContent = q.correct;
+            document.getElementById('incorrectAnswer').textContent = q.incorrect;
+            questionBox.classList.remove('hidden');
+        }
+        
+        function answerQuestion(isCorrect) {
+            questionBox.classList.add('hidden');
+            
+            if (isCorrect) {
+                checkpointsCompleted++;
+                currentQuestionIndex++;
+                if (checkpointsCompleted >= 6) {
+                    endGame(true);
+                    return;
+                }
+            } else {
+                // Respuesta incorrecta: retroceder 300px como penalización
+                player.x -= 300;
+                threat.x = Math.max(threat.x, player.x - 100);
+            }
+            
+            gameState = 'playing';
+        }
+        
+        function drawGame() {
+            // Fondo transparente para ver la imagen de fondo
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Cielo sutilmente oscurecido (sin bloquear fondo)
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, 'rgba(10, 10, 30, 0.3)');
+            gradient.addColorStop(1, 'rgba(26, 26, 46, 0.3)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // SAVE - Preparar para transform by camera
+            ctx.save();
+            ctx.translate(-cameraX, 0);
+            
+            // Suelo
+            ctx.fillStyle = '#2a4a2a';
+            ctx.fillRect(player.x - 500, groundY, 10000, canvas.height);
+            
+            // Línea del suelo
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(player.x - 500, groundY);
+            ctx.lineTo(player.x + canvas.width + 500, groundY);
+            ctx.stroke();
+            
+            // Checkpoints
+            for (let cp of checkpoints) {
+                ctx.fillStyle = cp.collected ? '#666' : '#00ffff';
+                ctx.shadowColor = cp.collected ? 'transparent' : '#00ffff';
+                ctx.shadowBlur = 15;
+                ctx.fillRect(cp.x - 25, cp.y - 50, 50, 50);
+                ctx.font = 'bold 30px Arial';
+                ctx.fillStyle = '#000';
+                ctx.textAlign = 'center';
+                ctx.fillText('❓', cp.x, cp.y - 15);
+                ctx.shadowBlur = 0;
+            }
+            
+            // Obstáculos
+            for (let obs of obstacles) {
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                if (obs.type === 'spike') {
+                    ctx.fillText('🔺', obs.x, obs.y + 15);
+                } else {
+                    ctx.fillText('💣', obs.x, obs.y + 15);
+                }
+            }
+            
+            // Jugador
+            ctx.font = 'bold 30px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('👨', player.x, player.y + 20);
+            
+            // Amenaza
+            ctx.font = 'bold 35px Arial';
+            ctx.fillStyle = '#ff0066';
+            ctx.shadowColor = '#ff0066';
+            ctx.shadowBlur = 20;
+            ctx.fillText('👿', threat.x, threat.y + 15);
+            ctx.shadowBlur = 0;
+            
+            // RESTORE - Fin del transform de cámara
+            ctx.restore();
+            
+            // Barra de amenaza (NO afectada por cámara)
+            const threatDistance = Math.abs(player.x - threat.x);
+            const threatPercent = Math.max(0, Math.min(100, 100 - (threatDistance / 200)));
+            
+            // Barra de fondo
+            ctx.fillStyle = 'rgba(255, 0, 100, 0.2)';
+            ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
+            
+            // Barra de amenaza
+            ctx.fillStyle = `rgba(255, 0, 100, ${0.3 + threatPercent/300})`;
+            ctx.fillRect(0, canvas.height - 30, (canvas.width * threatPercent) / 100, 30);
+            
+            // Actualizar HUD
+            // document.getElementById('healthDisplay').textContent = player.health;
+            document.getElementById('distanceDisplay').textContent = Math.floor(distanceTraveled);
+            document.getElementById('timeDisplay').textContent = Math.floor(gameTime);
+            document.getElementById('threatDisplay').textContent = Math.floor(threatPercent);
+        }
+        
+        function endGame(won) {
+            gameState = 'gameOver';
+            hud.classList.add('hidden');
+            
+            const stats = `📍 Distancia: ${Math.floor(distanceTraveled)}m<br>⏱️ Tiempo: ${Math.floor(gameTime)}s<br>✅ Checkpoints: ${checkpointsCompleted}/3`;
+            
+            if (won) {
+                document.getElementById('winStats').innerHTML = stats;
+                winScreen.classList.remove('hidden');
+            } else {
+                // Sin sistema de vidas - mensaje simple
+                const gameOverStats = `📍 Distancia: ${Math.floor(distanceTraveled)}m<br>⏱️ Tiempo: ${Math.floor(gameTime)}s`;
+                document.getElementById('gameOverStats').innerHTML = gameOverStats;
+                gameOverScreen.classList.remove('hidden');
+            }
+        }
+        
+        function resetGame() {
+            gameState = 'menu';
+            questionBox.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            winScreen.classList.add('hidden');
+            menuScreen.classList.remove('hidden');
+            hud.classList.add('hidden');
+        }
+        
+        // ========== CONTROLES DE TECLADO ==========
+        window.addEventListener('keydown', e => {
+            keys[e.key] = true;
+            
+            // Salto con ESPACIO o FLECHA ARRIBA
+            // velocityY = -8 proporciona un salto corto y cercano al suelo
+            if ((e.key === ' ' || e.key === 'ArrowUp') && gameState === 'playing') {
+                e.preventDefault();
+                if (!player.jumping) {
+                    player.velocityY = -8;
+                    player.jumping = true;
+                }
+            }
+        });
+        
+        window.addEventListener('keyup', e => {
+            keys[e.key] = false;
+        });
+        
+        function gameLoop() {
+            if (gameState === 'playing') {
+                updateGame();
+            }
+            
+            drawGame();
+            frameCount++;
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // ========== INICIALIZAR JUEGO ==========
+        resizeCanvas();
+        gameLoop();
+    </script>
+</body>
+</html>
+
+        
