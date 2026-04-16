@@ -69,7 +69,156 @@
             z-index: 1000;
             color: white;
             text-align: center;
-            padding: 40px;
+            padding: clamp(16px, 3vw, 40px);
+        }
+
+        .menu-screen, .win-screen, .game-over-screen {
+            background: radial-gradient(circle at 20% 20%, rgba(0, 255, 255, 0.08), transparent 45%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 0, 102, 0.08), transparent 50%),
+                        rgba(0,0,0,0.94);
+        }
+
+        .menu-screen::before, .win-screen::before, .game-over-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(0,255,255,0.06) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0,255,255,0.06) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.25;
+            pointer-events: none;
+        }
+
+        .menu-screen::after, .win-screen::after, .game-over-screen::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(0,255,255,0.12), rgba(0,0,0,0) 40%, rgba(255,0,102,0.12));
+            mix-blend-mode: screen;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .screen-panel {
+            position: relative;
+            z-index: 2;
+            width: min(900px, 86vw);
+            background: rgba(8, 12, 20, 0.9);
+            border: 1px solid rgba(0, 255, 255, 0.35);
+            border-radius: 24px;
+            padding: clamp(18px, 3vw, 32px) clamp(18px, 4vw, 36px);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.15), inset 0 0 24px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            margin: 0 auto;
+        }
+
+        .screen-header {
+            margin-bottom: clamp(12px, 2.5vw, 22px);
+        }
+
+        .menu-logo {
+            display: block;
+            width: min(200px, 52vw);
+            height: auto;
+            margin: 4px auto 12px;
+            filter: drop-shadow(0 10px 18px rgba(0, 255, 255, 0.25));
+        }
+
+        .menu-title {
+            font-size: clamp(26px, 3.8vw, 46px);
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .menu-title span {
+            display: block;
+        }
+
+        .screen-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            color: #bdfcff;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+            background: rgba(0, 255, 255, 0.08);
+        }
+
+        .screen-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 12px 0 18px;
+        }
+
+        .screen-card {
+            background: rgba(10, 18, 28, 0.9);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 14px 16px;
+            text-align: left;
+            box-shadow: inset 0 0 14px rgba(0,0,0,0.4);
+        }
+
+        .screen-card h3 {
+            font-size: 16px;
+            color: #8ff7ff;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .screen-card p {
+            font-size: 14px;
+            color: #b6c6d4;
+            line-height: 1.5;
+        }
+
+        .menu-actions {
+            margin-top: 14px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .screen-footer {
+            margin-top: 12px;
+            font-size: clamp(12px, 2.2vw, 14px);
+            color: #8aa2b7;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin: 24px 0 10px;
+        }
+
+        .stat-card {
+            background: rgba(10, 18, 28, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #8aa2b7;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            color: #e8fbff;
         }
         
         .hidden { display: none !important; }
@@ -84,7 +233,7 @@
         
         .subtitle {
             font-size: 24px;
-            margin-bottom: 40px;
+            margin-bottom: clamp(14px, 3vw, 26px);
             color: #ff0066;
             text-shadow: 0 0 10px #ff0066;
         }
@@ -92,18 +241,36 @@
         .instructions {
             background: rgba(0,255,255,0.1);
             border: 2px solid #00ffff;
-            padding: 20px;
+            padding: clamp(14px, 2.5vw, 20px);
             border-radius: 10px;
-            margin: 20px 0;
-            max-width: 600px;
-            font-size: 18px;
-            line-height: 1.8;
+            margin: 12px auto;
+            max-width: 620px;
+            font-size: clamp(14px, 2.3vw, 18px);
+            line-height: 1.6;
             color: #ccc;
+        }
+
+        .instructions strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #e8fbff;
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            columns: 2;
+            column-gap: 18px;
+        }
+
+        .instructions li {
+            margin-bottom: 6px;
         }
         
         button {
-            padding: 15px 50px;
-            font-size: 20px;
+            padding: clamp(12px, 2.6vw, 15px) clamp(28px, 6vw, 50px);
+            font-size: clamp(14px, 2.6vw, 20px);
             background: linear-gradient(135deg, #00ffff, #00ff88);
             color: #000;
             border: none;
@@ -130,7 +297,7 @@
             display: flex;
             justify-content: space-between;
             z-index: 100;
-            font-size: 18px;
+            font-size: clamp(12px, 2vw, 18px);
             font-weight: bold;
             color: #00ffff;
             font-family: 'Courier New', monospace;
@@ -150,14 +317,14 @@
         .hud-item {
             background: rgba(0,255,255,0.1);
             border: 2px solid #00ffff;
-            padding: 10px 20px;
+            padding: clamp(6px, 1.8vw, 10px) clamp(10px, 2.8vw, 20px);
             border-radius: 8px;
         }
         
         .threat-indicator {
             background: rgba(255,0,100,0.1);
             border: 2px solid #ff0066;
-            padding: 10px 20px;
+            padding: clamp(6px, 1.8vw, 10px) clamp(10px, 2.8vw, 20px);
             border-radius: 8px;
             color: #ff0066;
             text-shadow: 0 0 10px #ff0066;
@@ -176,11 +343,11 @@
             transform: translate(-50%, -50%);
             background: rgba(0,0,0,0.95);
             border: 3px solid #00ffff;
-            padding: 40px;
+            padding: clamp(18px, 4vw, 40px);
             border-radius: 20px;
             z-index: 1000;
             text-align: center;
-            max-width: 700px;
+            max-width: min(700px, 92vw);
             animation: slideIn 0.5s ease-out;
         }
         
@@ -251,6 +418,222 @@
             margin: 20px 0;
             line-height: 1.6;
         }
+
+        @media (max-width: 900px) {
+            .screen-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hud {
+                padding: 0 20px;
+            }
+
+            .hud-left,
+            .hud-right {
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .screen-panel {
+                width: min(92vw, 900px);
+                padding: 16px 18px;
+            }
+
+            .menu-logo {
+                width: min(190px, 48vw);
+                margin-bottom: 10px;
+            }
+
+            .screen-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 10px;
+                margin: 10px 0 14px;
+            }
+
+            .instructions {
+                margin: 10px auto;
+            }
+
+            .menu-actions {
+                margin-top: 10px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            h1 {
+                font-size: clamp(28px, 7vw, 44px);
+                margin-bottom: 14px;
+                letter-spacing: 2px;
+            }
+
+            .subtitle {
+                font-size: clamp(14px, 3.8vw, 20px);
+                margin-bottom: 18px;
+            }
+
+            .screen-panel {
+                width: min(96vw, 900px);
+                border-radius: 18px;
+            }
+
+            .screen-card {
+                padding: 14px 16px;
+            }
+
+            .screen-card h3 {
+                font-size: 14px;
+            }
+
+            .screen-card p {
+                font-size: 13px;
+            }
+
+            .menu-actions button {
+                width: min(100%, 360px);
+            }
+
+            .instructions {
+                max-width: 100%;
+            }
+
+            .instructions ul {
+                columns: 1;
+            }
+
+            .answer-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .answer-btn {
+                font-size: 14px;
+            }
+
+            .question-title {
+                font-size: clamp(18px, 4.6vw, 26px);
+            }
+
+            .question-text {
+                font-size: clamp(14px, 3.8vw, 18px);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .menu-screen, .game-over-screen, .win-screen {
+                justify-content: flex-start;
+                align-items: stretch;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .screen-panel {
+                width: 100%;
+                border-radius: 14px;
+                margin: 0;
+            }
+
+            .menu-actions button {
+                width: 100%;
+            }
+
+            .screen-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .instructions ul {
+                columns: 1;
+            }
+        }
+
+        @media (max-height: 740px) {
+            .menu-screen, .game-over-screen, .win-screen {
+                justify-content: flex-start;
+            }
+
+            .screen-panel {
+                max-height: 92vh;
+            }
+
+            .screen-header {
+                margin-bottom: 16px;
+            }
+
+            .screen-grid {
+                margin: 12px 0 16px;
+            }
+
+            .instructions {
+                margin: 14px auto;
+                line-height: 1.6;
+            }
+
+            .menu-actions {
+                margin-top: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .menu-logo {
+                width: min(180px, 70vw);
+            }
+
+            .screen-badge {
+                font-size: 10px;
+                letter-spacing: 1px;
+            }
+
+            .menu-title {
+                letter-spacing: 1px;
+            }
+
+            .hud {
+                top: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .hud-left,
+            .hud-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .hud-item,
+            .threat-indicator {
+                flex: 1 1 auto;
+                text-align: center;
+            }
+        }
+
+        @media (max-height: 740px) {
+            .menu-screen, .game-over-screen, .win-screen {
+                padding: 12px;
+            }
+
+            .screen-panel {
+                padding: 16px 18px;
+            }
+
+            .menu-logo {
+                width: min(170px, 48vw);
+                margin-bottom: 10px;
+            }
+
+            .screen-grid {
+                gap: 10px;
+                margin: 10px 0 14px;
+            }
+
+            .instructions {
+                margin: 10px auto;
+                font-size: clamp(12px, 2.1vw, 16px);
+            }
+
+            .menu-actions {
+                margin-top: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -282,47 +665,103 @@
         </div>
         
         <div class="menu-screen" id="menuScreen">
-            <h1>🏃 RUNNER</h1>
-            <div class="subtitle">ESCAPE DEL ACOSADOR</div>
-            <div class="instructions">
-                <strong>Ayuda al jugador a escapar del depredador digital</strong><br><br>
-                🕹️ Controles: ESPACIO o FLECHA ARRIBA para saltar<br>
-                🚧 Esquiva púas 🔺 y bombas 💣<br>
-                ❓ Responde preguntas de ciberseguridad en los checkpoints<br>
-                👿 El acosador acelera conforme avanzas<br>
-                📍 Recorre 9916 metros y 6 checkpoints para ganar
+            <div class="screen-panel">
+                <div class="screen-header">
+                    <img class="menu-logo" src="images/ChatGPT%20Image%2015%20abr%202026,%2016_12_55.png" alt="Logo Gobernacion de Risaralda">
+                    <h1 class="menu-title"><span>GOBERNACION</span><span>DE RISARALDA</span></h1>
+                    <div class="subtitle">ESCAPE DEL ACOSADOR</div>
+                </div>
+                <div class="screen-grid">
+                    <div class="screen-card">
+                        <h3>Objetivo</h3>
+                        <p>Corre hasta 9916m y supera 6 checkpoints de ciberseguridad.</p>
+                    </div>
+                    <div class="screen-card">
+                        <h3>Riesgos</h3>
+                        <p>Las puas y bombas son letales. El acosador acelera a medida que avanzas.</p>
+                    </div>
+                    <div class="screen-card">
+                        <h3>Controles</h3>
+                        <p>Salta con ESPACIO o FLECHA ARRIBA para esquivar los obstaculos.</p>
+                    </div>
+                </div>
+                <div class="instructions">
+                    <strong>Ayuda al jugador a escapar del depredador digital</strong>
+                    <ul>
+                        <li>Controles: ESPACIO o FLECHA ARRIBA para saltar</li>
+                        <li>Esquiva puas y bombas</li>
+                        <li>Responde preguntas de ciberseguridad en los checkpoints</li>
+                        <li>El acosador acelera conforme avanzas</li>
+                        <li>Recorre 9916 metros y 6 checkpoints para ganar</li>
+                    </ul>
+                </div>
+                <div class="menu-actions">
+                    <button onclick="startGame()">INICIAR JUEGO</button>
+                </div>
+                <div class="screen-footer">Consejo: responde bien para mantener distancia y ganar tiempo.</div>
             </div>
-            <button onclick="startGame()">INICIAR JUEGO</button>
         </div>
         
         <div class="game-over-screen hidden" id="gameOverScreen">
-            <h1>⚠️ INTERCEPTADO</h1>
-            <div class="subtitle">El acosador te atrapó</div>
-            <div class="stats" id="gameOverStats">
-                📍 Distancia: 0m<br>
-                ⏱️ Tiempo: 0s<br>
-                ✅ Checkpoints completados: 0/6
+            <div class="screen-panel">
+                <div class="screen-header">
+                    <div class="screen-badge">Amenaza activa</div>
+                    <h1>⚠️ INTERCEPTADO</h1>
+                    <div class="subtitle">El acosador te atrapó</div>
+                </div>
+                <div class="stats-grid" id="gameOverStats">
+                    <div class="stat-card">
+                        <div class="stat-label">Distancia</div>
+                        <div class="stat-value">0m</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Tiempo</div>
+                        <div class="stat-value">0s</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Checkpoints</div>
+                        <div class="stat-value">0/6</div>
+                    </div>
+                </div>
+                <div class="message">
+                    Recuerda: Mantén distancia con amenazas, no compartas datos,<br>
+                    configura privacidad y reporta acoso inmediatamente.
+                </div>
+                <div class="menu-actions">
+                    <button onclick="resetGame()">REINTENTAR</button>
+                </div>
             </div>
-            <div class="message">
-                Recuerda: Mantén distancia con amenazas, no compartas datos,<br>
-                configura privacidad y reporta acoso inmediatamente.
-            </div>
-            <button onclick="resetGame()">REINTENTAR</button>
         </div>
         
         <div class="win-screen hidden" id="winScreen">
-            <h1>🏆 ¡ESCAPASTE!</h1>
-            <div class="subtitle">Entrenamiento Completado</div>
-            <div class="stats" id="winStats">
-                📍 Distancia: 0m<br>
-                ⏱️ Tiempo: 0s<br>
-                ✅ Checkpoints completados: 3/3
+            <div class="screen-panel">
+                <div class="screen-header">
+                    <div class="screen-badge">Mision completada</div>
+                    <h1>🏆 ¡ESCAPASTE!</h1>
+                    <div class="subtitle">Entrenamiento completado</div>
+                </div>
+                <div class="stats-grid" id="winStats">
+                    <div class="stat-card">
+                        <div class="stat-label">Distancia</div>
+                        <div class="stat-value">0m</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Tiempo</div>
+                        <div class="stat-value">0s</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Checkpoints</div>
+                        <div class="stat-value">6/6</div>
+                    </div>
+                </div>
+                <div class="message">
+                    He demostrado ser un experto en ciberseguridad.<br>
+                    ¡Felicidades, CyberGuard!
+                </div>
+                <div class="menu-actions">
+                    <button onclick="resetGame()">NUEVO JUEGO</button>
+                </div>
             </div>
-            <div class="message">
-                He demostrado ser un experto en ciberseguridad.<br>
-                ¡Felicidades, CyberGuard!
-            </div>
-            <button onclick="resetGame()">NUEVO JUEGO</button>
         </div>
     </div>
 
@@ -341,6 +780,15 @@
         let gameState = 'menu'; // menu, playing, question, gameOver, won
         let frameCount = 0;
         let gameTime = 0;
+
+        const SETTINGS = {
+            totalCheckpoints: 6,
+            goalDistance: 9916,
+            introDistance: 600,
+            obstacleCount: 50,
+            baseRunSpeed: 6,
+            jumpVelocity: -9
+        };
         
         // Jugador
         let player = {
@@ -370,6 +818,9 @@
         let groundY = 0;
         let cameraX = 0;
         let distanceTraveled = 0;
+        let viewWidth = 0;
+        let viewHeight = 0;
+        let pixelRatio = 1;
         
         // Obstáculos
         let obstacles = [];
@@ -441,9 +892,15 @@
         let keys = {};
         
         function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            groundY = canvas.height * 0.7;
+            pixelRatio = Math.max(1, window.devicePixelRatio || 1);
+            viewWidth = window.innerWidth;
+            viewHeight = window.innerHeight;
+            canvas.width = Math.floor(viewWidth * pixelRatio);
+            canvas.height = Math.floor(viewHeight * pixelRatio);
+            canvas.style.width = `${viewWidth}px`;
+            canvas.style.height = `${viewHeight}px`;
+            ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+            groundY = viewHeight * 0.7;
         }
         
         window.addEventListener('resize', resizeCanvas);
@@ -457,6 +914,7 @@
             player.y = groundY - player.height;
             player.velocityY = 0;
             player.jumping = false;
+            player.speed = SETTINGS.baseRunSpeed;
             player.health = player.maxHealth;
             
             threat.x = -50;
@@ -481,24 +939,24 @@
             checkpoints = [];
             
             // ZONA DE INTRODUCCIÓN: primeros 600 píxeles sin obstáculos
-            const introDistance = 600;
+            const introDistance = SETTINGS.introDistance;
             
             // Primero: Generar checkpoints (6 checkpoints en lugar de 3)
             // Distancia variable entre obstáculos para evitar repetitividad
             const checkpointPositions = [];
-            const distancias = [160, 200, 180, 220, 170, 190]; // Distancias alternadas para más variedad
+            const distancias = [200, 200, 200, 200, 200, 200]; // Distancias alternadas para más variedad
             
             let currentX = introDistance + 150;
             let distanceIndex = 0;
             
             // Generar ~50 obstáculos con distancias variadas
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < SETTINGS.obstacleCount; i++) {
                 const distance = distancias[distanceIndex % distancias.length];
                 currentX += distance;
                 distanceIndex++;
                 
                 // Checkpoint cada ~8 obstáculos = 6 checkpoints totales en el recorrido
-                if (i % 8 === 0 && checkpointsCompleted < 6 && i > 0) {
+                if (i % 8 === 0 && i > 0 && checkpoints.length < SETTINGS.totalCheckpoints) {
                     checkpointPositions.push(currentX + 70);
                     checkpoints.push({ 
                         x: currentX + 70, 
@@ -515,7 +973,7 @@
             let obsX = introDistance + 150;
             distanceIndex = 0;
             
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < SETTINGS.obstacleCount; i++) {
                 const distance = distancias[distanceIndex % distancias.length];
                 obsX += distance;
                 distanceIndex++;
@@ -560,8 +1018,9 @@
             if (gameState === 'playing') {
                 player.x += player.speed;
             }
-            distanceTraveled = player.x;
-            cameraX = player.x - 150;
+            distanceTraveled = Math.max(distanceTraveled, player.x);
+            const targetCameraX = player.x - 150;
+            cameraX += (targetCameraX - cameraX) * 0.08;
             
             // Actualizar amenaza
             threat.speed = threat.baseSpeed + (distanceTraveled / 3000);
@@ -596,7 +1055,7 @@
             }
             
             // Verificar victoria - 6 checkpoints en lugar de 3
-            if (distanceTraveled >= 5500 && checkpointsCompleted >= 6) {
+            if (distanceTraveled >= SETTINGS.goalDistance && checkpointsCompleted >= SETTINGS.totalCheckpoints) {
                 endGame(true);
             }
             
@@ -615,7 +1074,7 @@
         
         function showQuestion(index) {
             const q = questions[index % questions.length];
-            document.getElementById('questionTitle').textContent = `Checkpoint ${checkpointsCompleted + 1}/6`;
+            document.getElementById('questionTitle').textContent = `Checkpoint ${checkpointsCompleted + 1}/${SETTINGS.totalCheckpoints}`;
             document.getElementById('questionText').textContent = q.text;
             document.getElementById('correctAnswer').textContent = q.correct;
             document.getElementById('incorrectAnswer').textContent = q.incorrect;
@@ -628,13 +1087,13 @@
             if (isCorrect) {
                 checkpointsCompleted++;
                 currentQuestionIndex++;
-                if (checkpointsCompleted >= 6) {
+                if (checkpointsCompleted >= SETTINGS.totalCheckpoints) {
                     endGame(true);
                     return;
                 }
             } else {
                 // Respuesta incorrecta: retroceder 300px como penalización
-                player.x -= 300;
+                player.x = Math.max(50, player.x - 300);
                 threat.x = Math.max(threat.x, player.x - 100);
             }
             
@@ -642,103 +1101,298 @@
         }
         
         function drawGame() {
-            // Fondo transparente para ver la imagen de fondo
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Cielo sutilmente oscurecido (sin bloquear fondo)
-            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            gradient.addColorStop(0, 'rgba(10, 10, 30, 0.3)');
-            gradient.addColorStop(1, 'rgba(26, 26, 46, 0.3)');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
+            ctx.clearRect(0, 0, viewWidth, viewHeight);
+
+            drawSky();
+            drawParallaxLayer(viewHeight * 0.55, 90, 'rgba(18, 24, 38, 0.85)', 0.08, 420);
+            drawParallaxLayer(viewHeight * 0.62, 70, 'rgba(22, 30, 44, 0.85)', 0.14, 360);
+            drawParallaxLayer(viewHeight * 0.7, 50, 'rgba(25, 38, 50, 0.85)', 0.2, 320);
+
             // SAVE - Preparar para transform by camera
             ctx.save();
             ctx.translate(-cameraX, 0);
-            
-            // Suelo
-            ctx.fillStyle = '#2a4a2a';
-            ctx.fillRect(player.x - 500, groundY, 10000, canvas.height);
-            
-            // Línea del suelo
-            ctx.strokeStyle = '#00ff88';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(player.x - 500, groundY);
-            ctx.lineTo(player.x + canvas.width + 500, groundY);
-            ctx.stroke();
-            
-            // Checkpoints
-            for (let cp of checkpoints) {
-                ctx.fillStyle = cp.collected ? '#666' : '#00ffff';
-                ctx.shadowColor = cp.collected ? 'transparent' : '#00ffff';
-                ctx.shadowBlur = 15;
-                ctx.fillRect(cp.x - 25, cp.y - 50, 50, 50);
-                ctx.font = 'bold 30px Arial';
-                ctx.fillStyle = '#000';
-                ctx.textAlign = 'center';
-                ctx.fillText('❓', cp.x, cp.y - 15);
-                ctx.shadowBlur = 0;
-            }
-            
-            // Obstáculos
-            for (let obs of obstacles) {
-                ctx.font = 'bold 24px Arial';
-                ctx.textAlign = 'center';
-                if (obs.type === 'spike') {
-                    ctx.fillText('🔺', obs.x, obs.y + 15);
-                } else {
-                    ctx.fillText('💣', obs.x, obs.y + 15);
-                }
-            }
-            
-            // Jugador
-            ctx.font = 'bold 30px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('👨', player.x, player.y + 20);
-            
-            // Amenaza
-            ctx.font = 'bold 35px Arial';
-            ctx.fillStyle = '#ff0066';
-            ctx.shadowColor = '#ff0066';
-            ctx.shadowBlur = 20;
-            ctx.fillText('👿', threat.x, threat.y + 15);
-            ctx.shadowBlur = 0;
-            
-            // RESTORE - Fin del transform de cámara
+
+            drawGround();
+            drawCheckpoints();
+            drawObstacles();
+            drawRunner();
+            drawThreat();
+
+            // RESTORE - Fin del transform de camara
             ctx.restore();
-            
-            // Barra de amenaza (NO afectada por cámara)
+
+            drawFog();
+
+            // Barra de amenaza (NO afectada por camara)
             const threatDistance = Math.abs(player.x - threat.x);
             const threatPercent = Math.max(0, Math.min(100, 100 - (threatDistance / 200)));
-            
+
             // Barra de fondo
             ctx.fillStyle = 'rgba(255, 0, 100, 0.2)';
-            ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
-            
+            ctx.fillRect(0, viewHeight - 30, viewWidth, 30);
+
             // Barra de amenaza
-            ctx.fillStyle = `rgba(255, 0, 100, ${0.3 + threatPercent/300})`;
-            ctx.fillRect(0, canvas.height - 30, (canvas.width * threatPercent) / 100, 30);
-            
+            ctx.fillStyle = `rgba(255, 0, 100, ${0.3 + threatPercent / 300})`;
+            ctx.fillRect(0, viewHeight - 30, (viewWidth * threatPercent) / 100, 30);
+
             // Actualizar HUD
-            // document.getElementById('healthDisplay').textContent = player.health;
             document.getElementById('distanceDisplay').textContent = Math.floor(distanceTraveled);
             document.getElementById('timeDisplay').textContent = Math.floor(gameTime);
             document.getElementById('threatDisplay').textContent = Math.floor(threatPercent);
+        }
+
+        function drawSky() {
+            const sky = ctx.createLinearGradient(0, 0, 0, viewHeight);
+            sky.addColorStop(0, 'rgba(8, 12, 22, 0.9)');
+            sky.addColorStop(0.6, 'rgba(18, 28, 40, 0.7)');
+            sky.addColorStop(1, 'rgba(22, 26, 36, 0.85)');
+            ctx.fillStyle = sky;
+            ctx.fillRect(0, 0, viewWidth, viewHeight);
+
+            const sun = ctx.createRadialGradient(viewWidth * 0.8, viewHeight * 0.2, 10, viewWidth * 0.8, viewHeight * 0.2, 220);
+            sun.addColorStop(0, 'rgba(255, 200, 120, 0.18)');
+            sun.addColorStop(1, 'rgba(255, 200, 120, 0)');
+            ctx.fillStyle = sun;
+            ctx.fillRect(0, 0, viewWidth, viewHeight);
+        }
+
+        function drawParallaxLayer(baseY, amplitude, color, parallax, segmentWidth) {
+            const offset = -(cameraX * parallax) % segmentWidth;
+            ctx.beginPath();
+            ctx.moveTo(offset - segmentWidth, baseY);
+
+            for (let x = offset - segmentWidth; x <= viewWidth + segmentWidth; x += segmentWidth) {
+                const peakX = x + segmentWidth * 0.5;
+                const wave = Math.abs(Math.sin((x + cameraX * parallax) * 0.002));
+                const peakY = baseY - amplitude * (0.6 + wave * 0.6);
+                ctx.lineTo(peakX, peakY);
+                ctx.lineTo(x + segmentWidth, baseY);
+            }
+
+            ctx.lineTo(viewWidth + segmentWidth, viewHeight);
+            ctx.lineTo(offset - segmentWidth, viewHeight);
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        function drawFog() {
+            const fog = ctx.createLinearGradient(0, viewHeight * 0.5, 0, viewHeight);
+            fog.addColorStop(0, 'rgba(10, 12, 18, 0)');
+            fog.addColorStop(1, 'rgba(6, 8, 12, 0.5)');
+            ctx.fillStyle = fog;
+            ctx.fillRect(0, 0, viewWidth, viewHeight);
+        }
+
+        function drawGround() {
+            ctx.fillStyle = '#1f372a';
+            ctx.fillRect(player.x - 1200, groundY, 20000, viewHeight - groundY);
+
+            ctx.strokeStyle = 'rgba(60, 120, 85, 0.8)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(player.x - 1200, groundY);
+            ctx.lineTo(player.x + viewWidth + 1200, groundY);
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(30, 60, 40, 0.5)';
+            ctx.lineWidth = 2;
+            for (let x = player.x - 800; x < player.x + viewWidth + 800; x += 90) {
+                const jitter = Math.sin((x + frameCount) * 0.04) * 4;
+                ctx.beginPath();
+                ctx.moveTo(x, groundY + 2);
+                ctx.lineTo(x + 24, groundY + 8 + jitter);
+                ctx.stroke();
+            }
+        }
+
+        function drawShadow(x, y, radius) {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+            ctx.beginPath();
+            ctx.ellipse(x, y, radius, radius * 0.4, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawRunner() {
+            const baseX = player.x;
+            const baseY = player.y + player.height;
+            const phase = Math.sin(frameCount * 0.2);
+            const legSpread = 10 + phase * 6;
+            const armSpread = 7 - phase * 4;
+
+            drawShadow(baseX, groundY + 6, 14 + Math.abs(phase) * 4);
+
+            ctx.strokeStyle = '#e6e6e6';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+
+            ctx.beginPath();
+            ctx.moveTo(baseX, baseY - 28);
+            ctx.lineTo(baseX, baseY - 12);
+            ctx.stroke();
+
+            ctx.fillStyle = '#f2f2f2';
+            ctx.beginPath();
+            ctx.arc(baseX, baseY - 36, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(baseX, baseY - 24);
+            ctx.lineTo(baseX - armSpread, baseY - 18);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(baseX, baseY - 24);
+            ctx.lineTo(baseX + armSpread, baseY - 20);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(baseX, baseY - 12);
+            ctx.lineTo(baseX - legSpread, baseY + 2);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(baseX, baseY - 12);
+            ctx.lineTo(baseX + legSpread, baseY + 2);
+            ctx.stroke();
+        }
+
+        function drawThreat() {
+            const baseX = threat.x;
+            const baseY = threat.y + threat.height;
+            const phase = Math.sin(frameCount * 0.22 + 1);
+            const legSpread = 12 + phase * 5;
+
+            drawShadow(baseX, groundY + 6, 16 + Math.abs(phase) * 3);
+
+            ctx.strokeStyle = '#ff3355';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+
+            ctx.beginPath();
+            ctx.moveTo(baseX, baseY - 30);
+            ctx.lineTo(baseX, baseY - 10);
+            ctx.stroke();
+
+            ctx.fillStyle = '#ff3355';
+            ctx.beginPath();
+            ctx.arc(baseX, baseY - 40, 7, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(baseX, baseY - 10);
+            ctx.lineTo(baseX - legSpread, baseY + 4);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(baseX, baseY - 10);
+            ctx.lineTo(baseX + legSpread, baseY + 4);
+            ctx.stroke();
+        }
+
+        function drawCheckpoints() {
+            for (let cp of checkpoints) {
+                if (!cp.collected) {
+                    const glow = Math.sin(frameCount * 0.08) * 4 + 12;
+                    ctx.fillStyle = 'rgba(0, 255, 255, 0.2)';
+                    ctx.fillRect(cp.x - 8, cp.y - 70, 16, 70);
+                    ctx.shadowColor = 'rgba(0, 255, 255, 0.6)';
+                    ctx.shadowBlur = glow;
+                } else {
+                    ctx.shadowBlur = 0;
+                }
+
+                ctx.fillStyle = cp.collected ? '#667' : '#e0f7ff';
+                ctx.fillRect(cp.x - 18, cp.y - 40, 36, 40);
+                ctx.shadowBlur = 0;
+
+                ctx.fillStyle = '#0a0f14';
+                ctx.fillRect(cp.x - 10, cp.y - 24, 20, 18);
+            }
+        }
+
+        function drawObstacles() {
+            for (let obs of obstacles) {
+                drawShadow(obs.x, groundY + 6, 12);
+                if (obs.type === 'spike') {
+                    drawSpike(obs.x, groundY - 2);
+                } else {
+                    drawBomb(obs.x, groundY - 6);
+                }
+            }
+        }
+
+        function drawSpike(x, y) {
+            ctx.fillStyle = '#cbd4db';
+            ctx.strokeStyle = '#9aa7b4';
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            ctx.moveTo(x - 14, y + 12);
+            ctx.lineTo(x, y - 18);
+            ctx.lineTo(x + 14, y + 12);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        function drawBomb(x, y) {
+            ctx.fillStyle = '#2a2f35';
+            ctx.beginPath();
+            ctx.arc(x, y, 12, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#3a4048';
+            ctx.beginPath();
+            ctx.arc(x - 4, y - 4, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#cfa23a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x + 6, y - 10);
+            ctx.lineTo(x + 14, y - 18);
+            ctx.stroke();
         }
         
         function endGame(won) {
             gameState = 'gameOver';
             hud.classList.add('hidden');
             
-            const stats = `📍 Distancia: ${Math.floor(distanceTraveled)}m<br>⏱️ Tiempo: ${Math.floor(gameTime)}s<br>✅ Checkpoints: ${checkpointsCompleted}/3`;
+            const stats = `
+                <div class="stat-card">
+                    <div class="stat-label">Distancia</div>
+                    <div class="stat-value">${Math.floor(distanceTraveled)}m</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Tiempo</div>
+                    <div class="stat-value">${Math.floor(gameTime)}s</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Checkpoints</div>
+                    <div class="stat-value">${checkpointsCompleted}/${SETTINGS.totalCheckpoints}</div>
+                </div>
+            `;
             
             if (won) {
                 document.getElementById('winStats').innerHTML = stats;
                 winScreen.classList.remove('hidden');
             } else {
                 // Sin sistema de vidas - mensaje simple
-                const gameOverStats = `📍 Distancia: ${Math.floor(distanceTraveled)}m<br>⏱️ Tiempo: ${Math.floor(gameTime)}s`;
+                const gameOverStats = `
+                    <div class="stat-card">
+                        <div class="stat-label">Distancia</div>
+                        <div class="stat-value">${Math.floor(distanceTraveled)}m</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Tiempo</div>
+                        <div class="stat-value">${Math.floor(gameTime)}s</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Checkpoints</div>
+                        <div class="stat-value">${checkpointsCompleted}/${SETTINGS.totalCheckpoints}</div>
+                    </div>
+                `;
                 document.getElementById('gameOverStats').innerHTML = gameOverStats;
                 gameOverScreen.classList.remove('hidden');
             }
@@ -762,7 +1416,7 @@
             if ((e.key === ' ' || e.key === 'ArrowUp') && gameState === 'playing') {
                 e.preventDefault();
                 if (!player.jumping) {
-                    player.velocityY = -8;
+                    player.velocityY = SETTINGS.jumpVelocity;
                     player.jumping = true;
                 }
             }
