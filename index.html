@@ -460,6 +460,13 @@
             .menu-actions {
                 margin-top: 10px;
             }
+
+            .menu-screen, .game-over-screen, .win-screen {
+                justify-content: flex-start;
+                align-items: stretch;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
         }
 
         @media (max-width: 700px) {
@@ -824,6 +831,7 @@
         let viewWidth = 0;
         let viewHeight = 0;
         let pixelRatio = 1;
+        let lastPlayerX = 0;
         
         // Obstáculos
         let obstacles = [];
@@ -929,6 +937,7 @@
             player.jumping = false;
             player.speed = SETTINGS.baseRunSpeed;
             player.health = player.maxHealth;
+            lastPlayerX = player.x;
             
             threat.x = -50;
             threat.y = groundY - threat.height;
@@ -1015,6 +1024,8 @@
         }
         
         function updateGame() {
+            const previousX = lastPlayerX;
+
             // Movimiento del jugador
             const gravity = 0.6;
             player.velocityY += gravity;
@@ -1031,6 +1042,7 @@
             if (gameState === 'playing') {
                 player.x += player.speed;
             }
+            lastPlayerX = player.x;
             distanceTraveled = Math.max(distanceTraveled, player.x);
             const targetCameraX = player.x - 150;
             cameraX += (targetCameraX - cameraX) * 0.08;
@@ -1060,7 +1072,7 @@
             
             // Verificar checkpoints - Usando colisión precisa
             for (let cp of checkpoints) {
-                if (!cp.collected && checkCollision(player, cp)) {
+                if (!cp.collected && didPassCheckpoint(cp, previousX, player.x)) {
                     cp.collected = true;
                     gameState = 'question';
                     showQuestion(currentQuestionIndex);
@@ -1083,6 +1095,18 @@
                    obj1.x + obj1.width > obj2.x &&
                    obj1.y < obj2.y + obj2.height &&
                    obj1.y + obj1.height > obj2.y;
+        }
+
+        function didPassCheckpoint(checkpoint, prevX, currentX) {
+            const prevLeft = prevX;
+            const prevRight = prevX + player.width;
+            const currentLeft = currentX;
+            const currentRight = currentX + player.width;
+            const spanLeft = Math.min(prevLeft, currentLeft);
+            const spanRight = Math.max(prevRight, currentRight);
+            const cpLeft = checkpoint.x;
+            const cpRight = checkpoint.x + checkpoint.width;
+            return spanRight >= cpLeft && spanLeft <= cpRight;
         }
         
         function showQuestion(index) {
@@ -1108,6 +1132,7 @@
                 // Respuesta incorrecta: retroceder 300px como penalización
                 player.x = Math.max(50, player.x - 300);
                 threat.x = Math.max(threat.x, player.x - 100);
+                lastPlayerX = player.x;
             }
             
             gameState = 'playing';
