@@ -34,6 +34,7 @@
             background-attachment: fixed;
             overflow: hidden;
             border: 2px solid #00ffff;
+            touch-action: none;
         }
         
         #gameContainer::before {
@@ -55,6 +56,7 @@
             position: relative;
             z-index: 5;
             background-color: transparent;
+            touch-action: none;
         }
         
         .menu-screen, .game-over-screen, .win-screen {
@@ -1434,21 +1436,21 @@
             keys[e.key] = false;
         });
 
-        gameContainer.addEventListener('pointerdown', event => {
+        const jumpHandler = event => {
             if (gameState !== 'playing') {
                 return;
             }
             event.preventDefault();
             attemptJump();
-        }, { passive: false });
+        };
 
-        gameContainer.addEventListener('touchstart', event => {
-            if (gameState !== 'playing') {
-                return;
-            }
-            event.preventDefault();
-            attemptJump();
-        }, { passive: false });
+        gameContainer.addEventListener('pointerdown', jumpHandler, { passive: false });
+        gameContainer.addEventListener('touchstart', jumpHandler, { passive: false });
+        gameContainer.addEventListener('click', jumpHandler);
+        canvas.addEventListener('pointerdown', jumpHandler, { passive: false });
+        canvas.addEventListener('touchstart', jumpHandler, { passive: false });
+        canvas.addEventListener('click', jumpHandler);
+        window.addEventListener('touchstart', jumpHandler, { passive: false });
         
         function gameLoop() {
             if (gameState === 'playing') {
