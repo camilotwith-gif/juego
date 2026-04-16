@@ -771,6 +771,7 @@
         
         // Elementos UI
         const hud = document.getElementById('hud');
+        const gameContainer = document.getElementById('gameContainer');
         const menuScreen = document.getElementById('menuScreen');
         const questionBox = document.getElementById('questionBox');
         const gameOverScreen = document.getElementById('gameOverScreen');
@@ -890,6 +891,16 @@
         
         // Controles
         let keys = {};
+
+        function attemptJump() {
+            if (gameState !== 'playing') {
+                return;
+            }
+            if (!player.jumping) {
+                player.velocityY = SETTINGS.jumpVelocity;
+                player.jumping = true;
+            }
+        }
         
         function resizeCanvas() {
             pixelRatio = Math.max(1, window.devicePixelRatio || 1);
@@ -1415,16 +1426,29 @@
             // velocityY = -8 proporciona un salto corto y cercano al suelo
             if ((e.key === ' ' || e.key === 'ArrowUp') && gameState === 'playing') {
                 e.preventDefault();
-                if (!player.jumping) {
-                    player.velocityY = SETTINGS.jumpVelocity;
-                    player.jumping = true;
-                }
+                attemptJump();
             }
         });
         
         window.addEventListener('keyup', e => {
             keys[e.key] = false;
         });
+
+        gameContainer.addEventListener('pointerdown', event => {
+            if (gameState !== 'playing') {
+                return;
+            }
+            event.preventDefault();
+            attemptJump();
+        }, { passive: false });
+
+        gameContainer.addEventListener('touchstart', event => {
+            if (gameState !== 'playing') {
+                return;
+            }
+            event.preventDefault();
+            attemptJump();
+        }, { passive: false });
         
         function gameLoop() {
             if (gameState === 'playing') {
